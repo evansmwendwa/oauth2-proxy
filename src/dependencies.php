@@ -21,3 +21,7 @@ $container['logger'] = function ($c) {
 $container['session'] = function ($c) {
     return new \SlimSession\Helper;
 };
+
+$container['HttpClient'] = function ($c) {
+    return new \App\Client();
+};
