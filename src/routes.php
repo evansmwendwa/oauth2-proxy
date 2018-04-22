@@ -9,13 +9,32 @@ use Dflydev\FigCookies\FigResponseCookies;
 $app->get('/refresh', function (Request $request, Response $response, array $args) {
     $this->logger->info("Slim-Skeleton '/refresh' route");
 
+    $authenticated = false;
+    $token = null;
+
+    if($this->session->exists('refresh_token')) {
+        $data = [
+            'grant_type' => 'refresh_token',
+            'refresh_token' => $this->session->get('refresh_token'),
+            'scope' => '',
+            'client_id' => getenv('CLIENT_ID'),
+            'client_secret' => getenv('CLIENT_SECRET')
+        ];
+
+        $token = $this->HttpClient->sendRequest(getenv('LOGIN_ENDPOINT'), $data);
+
+        if(isset($token->access_token)) {
+            $authenticated = true;
+            // remember users session
+            $this->session->set('refresh_token', $token->refresh_token);
+            // remove dangerours token from frontend
+            unset($token->refresh_token);
+        }
+    }
+
     $data = [
-      'authenticated' => false,
-      'token' => [
-          'token_type' => 'Bearer',
-          'expires_in' => 0,
-          'access_token' => null,
-      ]
+      'authenticated' => $authenticated,
+      'token' => $token
     ];
 
     return $response->withJson($data);
