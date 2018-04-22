@@ -18,7 +18,8 @@
         "monolog/monolog": "^1.17",
         "bryanjhv/slim-session": "~3.0",
         "symfony/dotenv": "^4.0",
-        "dflydev/fig-cookies": "^1.0"
+        "dflydev/fig-cookies": "^1.0",
+        "guzzlehttp/guzzle": "^6.3"
     },
     "require-dev": {
         "phpunit/phpunit": ">=4.8 < 6.0"
