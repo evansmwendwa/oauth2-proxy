@@ -11,7 +11,13 @@ if (PHP_SAPI == 'cli-server') {
 
 require __DIR__ . '/../vendor/autoload.php';
 
-session_start();
+// parse .env file early in app execution
+use Symfony\Component\Dotenv\Dotenv;
+$dotenv = new Dotenv();
+$dotenv->load(__DIR__.'/../.env');
+
+// disable session start - use middleware session
+//session_start();
 
 // Instantiate the app
 $settings = require __DIR__ . '/../src/settings.php';

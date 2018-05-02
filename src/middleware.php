@@ -45,11 +45,3 @@ $app->add(new \Slim\Middleware\Session([
     'lifetime' => getenv('SESSION_LIFETIME'),
     'httponly' => true
 ]));
-
-
-// needs to be executed first (last in this file) in order to source env variables
-$app->add(function ($request, $response, $next) {
-    $dotenv = new Dotenv();
-    $dotenv->load(__DIR__.'/../.env');
-	  return $next($request, $response);
-});
