@@ -4,9 +4,13 @@ Deploy an oAuth2 authentication proxy for your JavaScript SPA applications.
 This app allows you to protect your `client_id` and `client_secret` and maintain a csrf
 protected session using cookies.
 
+**NB:** This application is built using [Slim Framework](https://www.slimframework.com/) and tested using an oAuth2 implementation for [Laravel Passport](https://laravel.com/docs/5.6/passport)
+
+If you have any ideas, concerns e.t.c please open a pull request. Contribution is highly encouraged.
+
 ## Deploying with Nginx
 
-**NB:** This app must be deployed in the same domain name as your SPA application in order
+**NB:** This application must be deployed in the same domain name as your SPA application in order
 to bypass CORS (`This is for security measures - if you have to enable CORS then this might not be the correct solution for you`)
 
 **NB:** It's highly recommended you run this proxy app under HTTPS
@@ -62,6 +66,19 @@ bash start.sh
 
 ### Authentication Routes
 
+Both routes are protected with a csrf token. The csrf token will be passed via a cookie `XSRF-TOKEN` the first time you make a request to `/refresh`. After that every concecutive request must provide the csrf token via an header `X-XSRF-TOKEN`. This is done in order to protect the csrf token from being passed to the proxy without a CORS request.
+
+**Invalid CSRF token response**
+
+```json
+"authenticated": false,
+"token": {
+  "error": "csrf_validation_failure",
+  "message": "Missing or invalid csrf token"
+}
+
+```
+
 #### Login (POST)
 
 ```
@@ -88,21 +105,23 @@ bash start.sh
 
 #### Refresh (GET)
 
-In order to request a refresh token you must provide the `XSRF-TOKEN` provided to you via a cookie in the request header `X-XSRF-TOKEN`
-
-If the request is missing or has an invalid `X-XSRF-TOKEN` then you will get an error response as below.
-
-If any request to `/refresh` returns `authenticated:false` then redirect the user to login and the session will be created, hence storing a new refresh token in the proxy server session which will be used to refresh the access_token.
-
-```json
-"authenticated": false,
-"token": {
-  "error": "csrf_validation_failure",
-  "message": "Missing or invalid csrf token"
-}
-
-```
+If any request to `/refresh` returns `authenticated:false` then redirect the user to `/login` so that they can authenticate the session using a username and password
 
 ```
 /refresh
+```
+
+#### Authenticated Response
+
+All Authenticated responses from wither `/login` or `/refresh` will return the following type of response.
+
+```
+{
+    "authenticated": true,
+    "token": {
+        "token_type": "Bearer",
+        "expires_in": 18000,
+        "access_token": "eyJ0eXAiOiJKV1Qi3QLaifYLsJrtlSQz1JFoGhnOKSoSLJ7ji-tZnFWYsNvdBXS_5lN_sWrAQsOZHdvui7Q918V-GAr7Ele7M"
+    }
+}
 ```
