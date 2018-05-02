@@ -1,4 +1,4 @@
-# oAuth2 Authentication Proxy for JavaScript Applications
+# oAuth2 Authentication Proxy for JavaScript SPA Applications
 
 Deploy an oAuth2 authentication proxy for your JavaScript SPA applications.
 This app allows you to protect your `client_id` and `client_secret` and maintain a csrf
@@ -115,7 +115,7 @@ If any request to `/refresh` returns `authenticated:false` then redirect the use
 
 All Authenticated responses from wither `/login` or `/refresh` will return the following type of response.
 
-```
+```json
 {
     "authenticated": true,
     "token": {
