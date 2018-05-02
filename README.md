@@ -17,7 +17,8 @@ to bypass CORS (`This is for security measures - if you have to enable CORS then
 
 ### Deploy the App
 
-Clone the App to your server (If you have to do modifications to the code the fork it from the repo)
+Clone the App to your server (If you have to do modifications to the code then fork it from the repo)
+If you endup adding nice goodies then please share by opening a pull request.
 
 ```
 git clone https://github.com/evansmwendwa/oauth2-proxy.git
@@ -35,10 +36,10 @@ Generate `.env` file
 cp .env.dist .env
 ```
 
-Update your `.env` file to include your `client_id` and `client_secret`
+Update your `.env` file to include your `client_id` and `client_secret` see `.env.dist` for required settings. You can also put them in your servers environment variables but still have an empty .env file if you go that route.
 
 ### Update your Nginx conf
-**NB:** Optimize your nginx conf to your preferences. The only requirement here is for both your SPA app and the proxy app to run in the same domain name
+**NB:** Optimize your nginx conf to your preferences. The only requirement here is for both your SPA app and the proxy app to run in the same domain name. It's recommended to have both under HTTPS for obvious reasons.
 
 ```
 server {
@@ -59,6 +60,8 @@ server {
 ### Localhost testing
 
 You can run the proxy using php cli server for testing which will run the app in http://localhost:9000 we have included a bash script to make this easy.
+
+**NB:** running on a different port does not hinder CORS or cookie sharing
 
 ```
 bash start.sh
@@ -113,7 +116,7 @@ If any request to `/refresh` returns `authenticated:false` then redirect the use
 
 #### Authenticated Response
 
-All Authenticated responses from wither `/login` or `/refresh` will return the following type of response.
+All Authenticated responses from either `/login` or `/refresh` will return the following type of response.
 
 ```json
 {
