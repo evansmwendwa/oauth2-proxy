@@ -43,11 +43,11 @@ $app->get('/refresh', function (Request $request, Response $response, array $arg
 $app->post('/login', function (Request $request, Response $response, array $args) {
     $this->logger->info("Slim-Skeleton '/login' route");
 
-    $post = filter_input_array(INPUT_POST, $request->getParsedBody(), FILTER_SANITIZE_STRING);
+    $post = $request->getParsedBody();
 
     if(!isset($post['username']) || !isset($post['password'])) {
       return $response->withJson([
-        'authenticated' => 'false',
+        'authenticated' => false,
         'token' => [
           'error' => 'validation_failure',
           'message' => 'Missing username or password input'
@@ -56,8 +56,8 @@ $app->post('/login', function (Request $request, Response $response, array $args
     }
 
     $data = [
-        'username' => $post['username'],
-        'password' => $post['password'],
+        'username' => filter_var($post['username'], FILTER_SANITIZE_EMAIL),
+        'password' => filter_var($post['password'], FILTER_SANITIZE_STRING),
         'grant_type' => 'password',
         'scope' => '',
         'client_id' => getenv('CLIENT_ID'),
